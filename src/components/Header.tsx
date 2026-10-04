@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from 'react';
-import { Search, X, CheckSquare, FileText, Mic, Layers, Bell, BellRing, BellOff } from 'lucide-react';
+import { Search, X, CheckSquare, FileText, Mic, Layers, Bell, BellRing, BellOff, Camera } from 'lucide-react';
 import type { FilterType } from '../types/app';
 import type { NotificationPermissionState } from '../utils/notifications';
 
@@ -17,6 +17,8 @@ interface HeaderProps {
   notificationPermission?: NotificationPermissionState;
   onRequestPermission?: () => void;
   onTestNotification?: () => void;
+  activeIconUrl?: string;
+  onOpenIconModal?: () => void;
 }
 
 export const Header = ({
@@ -28,6 +30,8 @@ export const Header = ({
   notificationPermission = 'default',
   onRequestPermission,
   onTestNotification,
+  activeIconUrl,
+  onOpenIconModal,
 }: HeaderProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
 
@@ -52,11 +56,27 @@ export const Header = ({
         {/* Top Branding & Action Controls */}
         <div className="flex items-center justify-between gap-2.5">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-500 flex items-center justify-center shadow-lg shadow-rose-500/25 border border-white/20">
-              <span className="text-xs font-black tracking-tight text-white">FC</span>
-            </div>
-            <div>
-              <h1 className="text-sm font-black tracking-tight text-zinc-100 flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={onOpenIconModal}
+              className="relative w-8 h-8 rounded-xl overflow-hidden shadow-lg shadow-rose-500/25 border border-white/20 hover:border-rose-400/80 hover:scale-105 active:scale-95 transition-all shrink-0 bg-black cursor-pointer group"
+              title="Click to change favicon / upload your photo"
+            >
+              <img
+                src={activeIconUrl || '/favicon.svg'}
+                alt="App Icon"
+                className="w-full h-full object-cover group-hover:brightness-75 transition-all"
+              />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50">
+                <Camera className="w-3.5 h-3.5 text-white" />
+              </div>
+            </button>
+            <div
+              onClick={onOpenIconModal}
+              className="cursor-pointer group flex items-center gap-1"
+              title="Click to change favicon / upload your photo"
+            >
+              <h1 className="text-sm font-black tracking-tight text-zinc-100 flex items-center gap-1.5 group-hover:text-rose-300 transition-colors">
                 FastCapture
                 <span className="text-[10px] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-lg backdrop-blur-md bg-white/[0.06] border border-white/10 text-zinc-300">
                   Suite

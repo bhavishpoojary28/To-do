@@ -5,6 +5,7 @@ import { ActionDock } from './components/ActionDock';
 import { VoiceCaptureOverlay } from './components/VoiceCaptureOverlay';
 import { QuickEntryModal } from './components/QuickEntryModal';
 import { TaskAlertModal } from './components/TaskAlertModal';
+import { AppIconModal } from './components/AppIconModal';
 import { useVoiceTranscriber } from './hooks/useVoiceTranscriber';
 import { useReminderScheduler } from './hooks/useReminderScheduler';
 import { loadItems, saveItems, generateUUID } from './utils/storage';
@@ -31,6 +32,13 @@ export function App() {
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermissionState>(() =>
     getNotificationPermission()
   );
+  const [activeIconUrl, setActiveIconUrl] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('fast_capture_icon') || '/favicon.svg';
+    }
+    return '/favicon.svg';
+  });
+  const [isIconModalOpen, setIsIconModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const {
@@ -63,6 +71,36 @@ export function App() {
   useEffect(() => {
     registerServiceWorker();
   }, []);
+
+  // Sync active icon with browser link tags
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const favicon = document.querySelector("link[rel='icon']") as HTMLLinkElement;
+      if (favicon && activeIconUrl) favicon.href = activeIconUrl;
+      const appleIcon = document.querySelector("link[rel='apple-touch-icon']") as HTMLLinkElement;
+      if (appleIcon && activeIconUrl) appleIcon.href = activeIconUrl;
+    }
+  }, [activeIconUrl]);
+
+  // Handle switching app icon
+  const handleSelectIcon = useCallback(
+    (url: string) => {
+      setActiveIconUrl(url);
+      try {
+        localStorage.setItem('fast_capture_icon', url);
+        if (typeof document !== 'undefined') {
+          const favicon = document.querySelector("link[rel='icon']") as HTMLLinkElement;
+          if (favicon) favicon.href = url;
+          const appleIcon = document.querySelector("link[rel='apple-touch-icon']") as HTMLLinkElement;
+          if (appleIcon) appleIcon.href = url;
+        }
+        showToast('App icon updated successfully!');
+      } catch (e) {
+        console.warn('Icon save failed:', e);
+      }
+    },
+    [showToast]
+  );
 
   // Request Mobile Notification Permission
   const handleRequestPermission = useCallback(async () => {
@@ -382,6 +420,8 @@ export function App() {
         notificationPermission={notificationPermission}
         onRequestPermission={handleRequestPermission}
         onTestNotification={handleTestNotification}
+        activeIconUrl={activeIconUrl}
+        onOpenIconModal={() => setIsIconModalOpen(true)}
       />
 
       {/* Main Feed Container */}
@@ -494,6 +534,14 @@ export function App() {
           showToast('Task marked complete!');
         }}
         onSnooze={handleSnooze}
+      />
+
+      {/* App Icon Customizer Modal */}
+      <AppIconModal
+        isOpen={isIconModalOpen}
+        onClose={() => setIsIconModalOpen(false)}
+        activeIconUrl={activeIconUrl}
+        onSelectIcon={handleSelectIcon}
       />
 
       {/* Toast Notification */}

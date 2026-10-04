@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b"/>
+      <stop offset="100%" stop-color="#09090b"/>
+    </linearGradient>
+    <filter id="subtle" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#ffffff" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="120" fill="url(#bg)"/>
+  <rect width="504" height="504" x="4" y="4" rx="116" fill="none" stroke="#27272a" stroke-width="4"/>
+  <g opacity="0.4">
+    <rect x="100" y="220" width="18" height="72" rx="9" fill="#71717a"/>
+    <rect x="134" y="180" width="18" height="152" rx="9" fill="#a1a1aa"/>
+    <rect x="360" y="190" width="18" height="132" rx="9" fill="#a1a1aa"/>
+    <rect x="394" y="230" width="18" height="52" rx="9" fill="#71717a"/>
+  </g>
+  <path d="M168 268 L232 332 L344 180" fill="none" stroke="#ffffff" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" filter="url(#subtle)"/>
+  <circle cx="370" cy="140" r="12" fill="#ffffff" opacity="0.9"/>
+</svg>
